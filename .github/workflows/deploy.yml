@@ -6,10 +6,43 @@ on:
 permissions: {}
 
 jobs:
-  build:
+  page-a:
     runs-on: ubuntu-latest
     steps:
       - name: Create upload
+        run: |
+          mkdir github-pages
+          touch github-pages/index.html
+          echo '<html lang="en"><head><meta charset="UTF-*"></head><body><h1>Page A</h1></body></html>' > github-pages/index.html
+      - uses: actions/upload-artifact@v3
+        with:
+          name: page-a
+          path: github-pages
+          
+  page-b:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create upload
+        run: |
+          mkdir github-pages
+          touch github-pages/index.html
+          echo '<html lang="en"><head><meta charset="UTF-*"></head><body><h1>Page B</h1></body></html>' > github-pages/index.html
+      - uses: actions/upload-artifact@v3
+        with:
+          name: page-b
+          path: github-pages
+          
+  build:
+    needs: [page-a, page-b]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: github-pages
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: github-pages
+      - name: Create index
         run: |
           mkdir github-pages
           touch github-pages/index.html
@@ -18,6 +51,7 @@ jobs:
         uses: actions/upload-pages-artifact@v1
         with:
           path: github-pages
+
       
   deploy:
     needs: build
