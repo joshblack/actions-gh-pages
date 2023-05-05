@@ -1,0 +1,36 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create upload
+        run: |
+          mkdir github-pages
+          touch github-pages/index.html
+          echo '<html lang="en"><head><meta charset="UTF-*"></head><body><h1>Hello world</h1></body></html>' > github-pages/index.html
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: github-pages
+      
+  deploy:
+    needs: build
+    permissions:
+      # Deploy to Pages
+      pages: write
+       # Verify the deployment originates from an appropriate source
+      id-token: write  
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
