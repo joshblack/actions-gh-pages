@@ -44,7 +44,7 @@ jobs:
         working-directory: github-pages
       - name: Create index
         run: |
-          mkdir github-pages
+          mkdir -p github-pages
           touch github-pages/index.html
           echo '<html lang="en"><head><meta charset="UTF-*"></head><body><h1>Hello world</h1></body></html>' > github-pages/index.html
       - name: Upload artifact
